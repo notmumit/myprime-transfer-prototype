@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>myPrime — Flexible Transfer Prototype</title>
+<style>
+:root {
+  --site-primary: #087b67;
+  --site-secondary: #dff5ee;
+  --site-background: #f3f8f7;
+  --site-on-primary: #ffffff;
+  --site-on-secondary: #123e36;
+  --site-on-background: #172e2a;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: var(--site-background); color: var(--site-on-background); }
+.app { min-height: 100vh; background-color: light-dark(var(--site-background), #10201d); color: light-dark(var(--site-on-background), #eaf7f3); padding: calc(26px * var(--site-spacing-scale)); }
+.shell { max-width: 1100px; margin: 0 auto; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:26px; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.03em; font-size:22px; }
+.brand-mark { display:grid; place-items:center; width:40px; height:40px; border-radius:13px; background:var(--site-primary); color:var(--site-on-primary); font-weight:900; }
+.tag { border:1px solid light-dark(#c9e6dc,#35564d); border-radius:999px; padding:7px 12px; font-size:12px; font-weight:700; color:light-dark(#087b67,#8fe0c7); }
+.layout { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(330px,.95fr); gap:24px; align-items:start; }
+.intro, .phone-card, .insight { border:1px solid light-dark(#dce9e5,#2b4941); background:light-dark(#fff,#172c27); border-radius:calc(22px * var(--site-radius-scale)); }
+.intro { padding:calc(28px * var(--site-spacing-scale)); }
+.eyebrow { color:light-dark(#087b67,#8fe0c7); text-transform:uppercase; letter-spacing:.13em; font-size:11px; font-weight:800; }
+h1 { font-family:var(--site-font-heading); font-size:calc(34px * var(--site-heading-scale)); line-height:1.12; letter-spacing:-.045em; margin:12px 0; }
+.lead { color:light-dark(#526a64,#b4c9c2); line-height:1.65; font-size:15px; max-width:620px; }
+.pills { display:flex; flex-wrap:wrap; gap:8px; margin:22px 0; }
+.pill { padding:8px 11px; border-radius:999px; background:light-dark(#e7f6f0,#203e35); color:light-dark(#166451,#a8e6d2); font-size:12px; font-weight:700; }
+.insight { padding:18px; margin-top:14px; background:light-dark(var(--site-secondary),#1a3931); }
+.insight h3 { margin:0 0 7px; font-size:15px; }
+.insight p { margin:0; line-height:1.55; color:light-dark(#45655b,#c0d9d0); font-size:13px; }
+.phone-card { padding:22px; }
+.phone-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+.phone-head h2 { font-size:18px; margin:0; }
+.step-label { font-size:12px; font-weight:700; color:light-dark(#087b67,#8fe0c7); }
+.progress { display:flex; gap:5px; margin:0 0 22px; }
+.progress span { height:4px; border-radius:9px; flex:1; background:light-dark(#e1ebe7,#304b43); }
+.progress span.active { background:var(--site-primary); }
+.screen-title { font-size:22px; letter-spacing:-.03em; margin:0 0 6px; }
+.sub { color:light-dark(#687e77,#aec4bc); font-size:13px; line-height:1.5; margin:0 0 22px; }
+.field { margin-bottom:15px; }
+label { display:block; font-size:12px; font-weight:750; margin-bottom:7px; }
+input, select { width:100%; padding:13px 12px; border:1px solid light-dark(#d8e5e0,#35564d); border-radius:11px; background:light-dark(#fbfdfc,#11231e); color:inherit; font:inherit; font-size:14px; outline:none; }
+input:focus, select:focus { border-color:var(--site-primary); box-shadow:0 0 0 3px light-dark(#d8f2e9,#214b40); }
+.toggle-row { display:flex; align-items:flex-start; gap:12px; padding:14px; background:light-dark(#f0f8f5,#1b352e); border-radius:13px; margin:18px 0; }
+.toggle-row input { width:18px; height:18px; margin:2px 0 0; accent-color:var(--site-primary); }
+.toggle-row label { margin:0; font-size:13px; }
+.toggle-row small { display:block; margin-top:4px; font-size:12px; font-weight:400; color:light-dark(#60786f,#b1c8bf); line-height:1.45; }
+.btnrow { display:flex; gap:10px; margin-top:22px; }
+button { cursor:pointer; border:0; border-radius:12px; padding:13px 16px; font:inherit; font-weight:750; font-size:13px; transition:transform .12s ease, opacity .12s ease; }
+button:active { transform:scale(.985); }
+.primary { background:var(--site-primary); color:var(--site-on-primary); flex:1; }
+.secondary { background:light-dark(#edf4f1,#233d35); color:inherit; }
+.linkbtn { color:light-dark(#087b67,#8fe0c7); background:transparent; padding-left:0; padding-right:0; }
+.notice { font-size:11px; line-height:1.5; color:light-dark(#72857e,#a5bdb4); margin-top:16px; }
+.summary { background:light-dark(#f4f9f7,#10241e); border:1px solid light-dark(#e0ebe6,#2d4b40); border-radius:14px; padding:15px; margin:16px 0; }
+.summary-row { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid light-dark(#e0ebe6,#2d4b40); font-size:13px; }
+.summary-row:last-child { border:0; font-weight:800; font-size:15px; }
+.summary-row span:first-child { color:light-dark(#6b8079,#abc1b8); }
+.success { text-align:center; padding:24px 6px 10px; }
+.check { width:62px; height:62px; border-radius:50%; background:light-dark(#d8f4e8,#1d5947); color:light-dark(#087b50,#a4f0d2); display:grid; place-items:center; margin:0 auto 16px; font-size:30px; font-weight:900; }
+.success h2 { margin:0 0 8px; }
+.success p { color:light-dark(#60766e,#b4c9c0); line-height:1.6; font-size:13px; }
+.toast { min-height:18px; color:light-dark(#b64c2a,#ffb79b); font-size:12px; margin-top:9px; }
+.footer { text-align:center; font-size:11px; color:light-dark(#72857e,#9ab2a8); margin-top:22px; }
+@media (max-width:800px) { .layout { grid-template-columns:1fr; } h1 { font-size:30px; } .app { padding:16px; } }
+</style>
+</head>
+<body>
+<div class="app" data-sites-preview-theme>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">m</span><span>myPrime <span style="font-weight:500;opacity:.65">concept</span></span></div>
+      <span class="tag">PRODUCT OWNER PROTOTYPE</span>
+    </header>
+    <main class="layout">
+      <section>
+        <div class="intro">
+          <div class="eyebrow">Proposed feature</div>
+          <h1>Transfer first.<br>Save if you want.</h1>
+          <p class="lead">Let customers send money to a new recipient directly from the transfer flow. Saving the recipient as a beneficiary becomes optional—not a roadblock before the transaction.</p>
+          <div class="pills"><span class="pill">Fewer steps</span><span class="pill">One-time transfers</span><span class="pill">Customer choice</span></div>
+        </div>
+        <div class="insight"><h3>Why this moment matters</h3><p>When a customer only needs to make a one-time transfer, requiring a separate beneficiary setup creates extra effort. This concept keeps the user in one flow and makes future saving their choice.</p></div>
+        <div class="insight"><h3>Prototype scope</h3><p>Demonstrates the customer journey only. Real banking integration, account verification, limits, authentication, and transaction security would still need to be enforced by the bank.</p></div>
+      </section>
+      <section class="phone-card" aria-live="polite">
+        <div class="phone-head"><h2>Try the transfer flow</h2><span class="step-label" id="stepLabel">STEP 1 OF 3</span></div>
+        <div class="progress"><span id="p1" class="active"></span><span id="p2"></span><span id="p3"></span></div>
+        <div id="screen"></div>
+        <div class="footer">Interactive concept · Sample data only · No real transaction is made</div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+const state = { bank:'Prime Bank', account:'', name:'', amount:'', save:false, done:false };
+const screen = document.getElementById('screen');
+function updateProgress(step) {
+  document.getElementById('stepLabel').textContent = `STEP ${step} OF 3`;
+  [1,2,3].forEach(n => document.getElementById('p'+n).classList.toggle('active', n <= step));
+}
+function renderEntry() {
+  updateProgress(1);
+  screen.innerHTML = `
+    <h3 class="screen-title">Who are you paying?</h3>
+    <p class="sub">Enter the recipient details to continue. After the transfer, you can choose to save this recipient for next time.</p>
+    <div class="field"><label for="bank">Recipient bank</label><select id="bank"><option>Prime Bank</option><option>Dutch-Bangla Bank</option><option>Eastern Bank (EBL)</option><option>BRAC Bank</option><option>City Bank</option><option>Other bank</option></select></div>
+    <div class="field"><label for="account">Account number</label><input id="account" inputmode="numeric" placeholder="Enter account number" value="${escapeHtml(state.account)}" /></div>
+    <div class="field"><label for="name">Recipient name <span style="font-weight:400;opacity:.65">(optional in this demo)</span></label><input id="name" placeholder="Enter recipient name" value="${escapeHtml(state.name)}" /></div>
+    <div class="field"><label for="amount">Transfer amount (BDT)</label><input id="amount" inputmode="decimal" placeholder="e.g. 2500" value="${escapeHtml(state.amount)}" /></div>
+    <div class="btnrow"><button class="primary" id="review">Review transfer →</button></div>
+    <div class="toast" id="error"></div>
+    <p class="notice">In a live product, recipient verification, authentication, transfer limits and bank security checks remain mandatory.</p>`;
+  document.getElementById('bank').value = state.bank;
+  document.getElementById('review').onclick = () => {
+    state.bank = document.getElementById('bank').value;
+    state.account = document.getElementById('account').value.trim();
+    state.name = document.getElementById('name').value.trim();
+    state.amount = document.getElementById('amount').value.trim();
+    state.save = false;
+    const err = document.getElementById('error');
+    if (!/^\d{6,20}$/.test(state.account)) { err.textContent = 'Enter a sample account number using 6–20 digits.'; return; }
+    if (!state.amount || !Number.isFinite(Number(state.amount)) || Number(state.amount) <= 0) { err.textContent = 'Enter a valid transfer amount greater than 0.'; return; }
+    renderReview();
+  };
+}
+function renderReview() {
+  updateProgress(2);
+  const amount = Number(state.amount).toLocaleString('en-BD');
+  screen.innerHTML = `
+    <h3 class="screen-title">Review & confirm</h3>
+    <p class="sub">Check the details before confirming your sample transfer.</p>
+    <div class="summary">
+      <div class="summary-row"><span>Recipient</span><strong>${escapeHtml(state.name || 'New recipient')}</strong></div>
+      <div class="summary-row"><span>Account number</span><strong>${escapeHtml(state.account)}</strong></div>
+      <div class="summary-row"><span>Bank</span><strong>${escapeHtml(state.bank)}</strong></div>
+      <div class="summary-row"><span>Transfer amount</span><strong>৳ ${amount}</strong></div>
+      <div class="summary-row"><span>Total (demo; fees not calculated)</span><strong>৳ ${amount}</strong></div>
+    </div>
+    <div class="btnrow"><button class="secondary" id="back">← Edit details</button><button class="primary" id="confirm">Confirm demo transfer</button></div>
+    <p class="notice">This prototype does not connect to a bank and will not move money.</p>`;
+  document.getElementById('back').onclick = renderEntry;
+  document.getElementById('confirm').onclick = renderSuccess;
+}
+function renderSuccess() {
+  updateProgress(3);
+  screen.innerHTML = `
+    <div class="success"><div class="check">✓</div><h2>Transfer successful!</h2><p>Your sample transfer of <strong>৳ ${Number(state.amount).toLocaleString('en-BD')}</strong> to <strong>${escapeHtml(state.name || 'the recipient')}</strong> is complete in this demo.</p></div>
+    <div class="summary"><h3 style="margin:0 0 8px">Save this beneficiary?</h3><p style="margin:0">Would you like to save ${escapeHtml(state.name || 'this recipient')} for faster transfers next time?</p><div class="btnrow"><button class="secondary" id="notNow">Not now</button><button class="primary" id="saveBeneficiary">Save beneficiary</button></div></div>
+    <p class="notice">Demo confirmation only—not a real banking transaction or proof of account verification.</p>`;
+  document.getElementById('notNow').onclick = () => finishSuccess(false);
+  document.getElementById('saveBeneficiary').onclick = () => finishSuccess(true);
+}
+function finishSuccess(save) {
+  state.save = save;
+  screen.innerHTML = `
+    <div class="success"><div class="check">✓</div><h2>${save ? 'Beneficiary saved' : 'All done'}</h2><p>${save ? `${escapeHtml(state.name || 'This recipient')} would now be available in your beneficiary list for future transfers.` : 'Your transfer is complete. This recipient has not been saved, so you can make a one-time transfer without adding a beneficiary.'}</p></div>
+    <div class="btnrow"><button class="primary" id="again">Start another transfer</button></div>
+    <p class="notice">Demo only—not a real banking transaction or a persistent beneficiary record.</p>`;
+  document.getElementById('again').onclick = () => { Object.assign(state,{account:'',name:'',amount:'',save:false,bank:'Prime Bank'}); renderEntry(); };
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+renderEntry();
+</script>
+</body>
+</html>
